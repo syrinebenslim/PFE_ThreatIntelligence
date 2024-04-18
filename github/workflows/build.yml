@@ -1,0 +1,14 @@
+name: Build ThreatInteligence_Platform
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on:
+  push:
+    branches:
+      -main
+
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubnto-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+
+      - name: Check out repository code

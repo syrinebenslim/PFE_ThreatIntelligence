@@ -1,6 +1,6 @@
 
 [tool.poetry]
-name = "file_watcher_sftp"
+name = "watcher"
 version = "0.1.0"
 description = "File watcher"
 authors = ["Syrine ben slim <syrinebenslim98@gmail.com>"]
@@ -33,7 +33,7 @@ requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
 [tool.poetry.scripts]
-run = "wsgi:script"
+run = "watcher.main:main"
 
 [tool.poetry.urls]
 issues = "https://github.com/hackersandslackers/python-poetry-tutorial/issues"
