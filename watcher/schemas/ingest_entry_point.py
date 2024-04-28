@@ -8,13 +8,14 @@ from watcher.schemas.ingest_tidb import QueryPlayer, DatabaseConnection
 
 def main():
     # Use a breakpoint in the code line below to debug your script.
-    Session = None
+    session = None
     try:
         engine = DatabaseConnection().engine
 
         print(
             f"Connection to the {engine} for user {engine} created successfully.")
-        session = DatabaseConnection().get_sessions()
+        Session = DatabaseConnection().get_sessions()
+        session = Session()
     except Exception as ex:
         print("Connection/Session could not be made due to the following error: \n", ex)
 
