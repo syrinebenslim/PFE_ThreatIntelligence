@@ -24,7 +24,7 @@ loguru = "*"
 psutil = "*"
 certifi = "^2023.11.17"
 watchdog = "4.0.0"
-SQLAlchemy = "2.0.9"
+SQLAlchemy = "2.0.29"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"

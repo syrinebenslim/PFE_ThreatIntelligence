@@ -1,14 +1,16 @@
 # This is a sample Python script.
-from schemas.ingest_tidb.py import
 
 
 # Press Maj+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from watcher.schemas.ingest_tidb import QueryPlayer
 
 
 def main():
     # Use a breakpoint in the code line below to debug your script.
-    FeedWatcher()
+
+    QueryPlayer().simple_example()
+    QueryPlayer().trade_example()
 
 
 # Press the green button in the gutter to run the script.
