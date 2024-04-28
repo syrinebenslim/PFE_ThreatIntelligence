@@ -19,8 +19,8 @@ def main():
         print("Connection/Session could not be made due to the following error: \n", ex)
 
     if Session is not None:
-        QueryPlayer(Session).simple_example()
-        QueryPlayer(Session).trade_example()
+        QueryPlayer().simple_example(Session)
+        QueryPlayer().trade_example(Session)
     else:
         print("Session could not be made")
 
