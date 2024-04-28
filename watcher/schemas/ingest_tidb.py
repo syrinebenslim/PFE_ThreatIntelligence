@@ -38,8 +38,8 @@ class QueryPlayer:
 
         return players
 
-    def simple_example(self) -> None:
-        with DatabaseConnection().get_sessions() as session:
+    def simple_example(self, Session) -> None:
+        with Session as session:
             # create a player, who has a coin and a goods.
             session.add(Player(id="test", coins=1, goods=1))
 
@@ -79,8 +79,8 @@ class QueryPlayer:
             print(f'buy player {buy_id} coins not enough')
             return False
 
-    def trade(self, sell_id: str, buy_id: str, amount: int, price: int) -> None:
-        with DatabaseConnection().get_sessions() as session:
+    def trade(self, Session, sell_id: str, buy_id: str, amount: int, price: int) -> None:
+        with Session as session:
             if self.trade_check(session, sell_id, buy_id, amount, price) is False:
                 return
 
@@ -94,8 +94,8 @@ class QueryPlayer:
             session.commit()
             print("trade success")
 
-    def trade_example(self) -> None:
-        with DatabaseConnection().get_sessions() as session:
+    def trade_example(self, Session) -> None:
+        with Session as session:
             # create two players
             # player 1: id is "1", has only 100 coins.
             # player 2: id is "2", has 114514 coins, and 20 goods.
@@ -106,13 +106,13 @@ class QueryPlayer:
         # player 1 wants to buy 10 goods from player 2.
         # it will cost 500 coins, but player 1 cannot afford it.
         # so this trade will fail, and nobody will lose their coins or goods
-        self.trade(sell_id="2", buy_id="1", amount=10, price=500)
+        self.trade(Session, sell_id="2", buy_id="1", amount=10, price=500)
 
         # then player 1 has to reduce the incoming quantity to 2.
         # this trade will be successful
-        self.trade(sell_id="2", buy_id="1", amount=2, price=100)
+        self.trade(Session, sell_id="2", buy_id="1", amount=2, price=100)
 
-        with DatabaseConnection().get_sessions() as session:
+        with Session as session:
             traders = session.query(Player).filter(Player.id.in_(("1", "2"))).all()
             for player in traders:
                 print(player)
