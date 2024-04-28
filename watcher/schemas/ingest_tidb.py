@@ -16,7 +16,7 @@ class DatabaseConnection:
         return create_engine(
             URL.create(
                 drivername="mysql+pymysql",
-                username="threat_app_user",
+                username="root",
                 password="changeit",
                 host="192.168.1.140",
                 port=4000,
