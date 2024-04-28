@@ -41,7 +41,6 @@ class QueryPlayer:
     def simple_example(self, session) -> None:
         # create a player, who has a coin and a goods.
         session.add(Player(id="test", coins=1, goods=1))
-
         # get this player, and print it.
         get_test_stmt = select(Player).where(Player.id == "test")
         for player in session.scalars(get_test_stmt):
