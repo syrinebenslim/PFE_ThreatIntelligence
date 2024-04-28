@@ -1,3 +1,5 @@
+
+
 import os
 import time
 
@@ -5,14 +7,15 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 from watcher.feed_parsers_shadow import FeedParser
-
+from watchdog.events import PatternMatchingEventHandler
 # Define the directory to monitor
 directory_to_watch = '/data/vulnerabilities'
 
 
 # Define a custom handler to handle file creation events
-class FeedEventHandler(FileSystemEventHandler):
+class FeedEventHandler(PatternMatchingEventHandler):
     def on_created(self, event):
+        print("bloc creation")
         try:
             if event.is_directory:
                 print(f"Directory created: {event.src_path}")
@@ -25,7 +28,8 @@ class FeedEventHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         try:
-            print(f"File created: {event.src_path}")
+            print(f"File modified: {event.src_path}")
+            print("bloc modification")
 
         except Exception as e:
             print(f'Error in on_created event handler: {e}')
@@ -36,15 +40,19 @@ class FeedEventHandler(FileSystemEventHandler):
 
 class FeedWatcher:
     print(directory_to_watch)
+    print("new code")
     observer = Observer()
-    observer.schedule(FeedEventHandler(), directory_to_watch, recursive=True)
+    observer.schedule(FeedEventHandler(patterns=["*.csv"],
+                              ignore_patterns=[],
+                              ignore_directories=True
+                              ), directory_to_watch, recursive=True)
 
     # Start the observer
     observer.start()
 
     try:
         while True:
-            time.sleep(1)
+            time.sleep(3)
     except KeyboardInterrupt:
         # Stop the observer if Ctrl+C is pressed
         observer.stop()
