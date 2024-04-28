@@ -18,7 +18,7 @@ def main():
     except Exception as ex:
         print("Connection/Session could not be made due to the following error: \n", ex)
 
-    if Session is not None:
+    if session is not None:
         QueryPlayer().simple_example(session)
     else:
         print("Session could not be made")
