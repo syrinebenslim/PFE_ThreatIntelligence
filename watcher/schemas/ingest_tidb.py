@@ -38,82 +38,29 @@ class QueryPlayer:
 
         return players
 
-    def simple_example(self, Session) -> None:
-        with Session as session:
-            # create a player, who has a coin and a goods.
-            session.add(Player(id="test", coins=1, goods=1))
+    def simple_example(self, session) -> None:
+        # create a player, who has a coin and a goods.
+        session.add(Player(id="test", coins=1, goods=1))
 
-            # get this player, and print it.
-            get_test_stmt = select(Player).where(Player.id == "test")
-            for player in session.scalars(get_test_stmt):
-                print(player)
+        # get this player, and print it.
+        get_test_stmt = select(Player).where(Player.id == "test")
+        for player in session.scalars(get_test_stmt):
+            print(player)
 
-            # create players with bulk inserts.
-            # insert 1919 players totally, with 114 players per batch.
-            # each player has a random UUID
-            player_list = self.random_player(1919)
-            for idx in range(0, len(player_list), 114):
-                session.bulk_save_objects(player_list[idx:idx + 114])
+        # create players with bulk inserts.
+        # insert 1919 players totally, with 114 players per batch.
+        # each player has a random UUID
+        player_list = self.random_player(1919)
+        for idx in range(0, len(player_list), 114):
+            session.bulk_save_objects(player_list[idx:idx + 114])
 
-            # print the number of players
-            count = session.query(func.count(Player.id)).scalar()
-            print(f'number of players: {count}')
+        # print the number of players
+        count = session.query(func.count(Player.id)).scalar()
+        print(f'number of players: {count}')
 
-            # print 3 players.
-            three_players = session.query(Player).limit(3).all()
-            for player in three_players:
-                print(player)
+        # print 3 players.
+        three_players = session.query(Player).limit(3).all()
+        for player in three_players:
+            print(player)
 
-            session.commit()
-
-    def trade_check(self, session, sell_id: str, buy_id: str, amount: int, price: int) -> bool:
-        # sell player goods check
-        sell_player = session.query(Player.goods).filter(Player.id == sell_id).with_for_update().one()
-        if sell_player.goods < amount:
-            print(f'sell player {sell_id} goods not enough')
-            return False
-
-        # buy player coins check
-        buy_player = session.query(Player.coins).filter(Player.id == buy_id).with_for_update().one()
-        if buy_player.coins < price:
-            print(f'buy player {buy_id} coins not enough')
-            return False
-
-    def trade(self, Session, sell_id: str, buy_id: str, amount: int, price: int) -> None:
-        with Session as session:
-            if self.trade_check(session, sell_id, buy_id, amount, price) is False:
-                return
-
-            # deduct the goods of seller, and raise his/her the coins
-            session.query(Player).filter(Player.id == sell_id). \
-                update({'goods': Player.goods - amount, 'coins': Player.coins + price})
-            # deduct the coins of buyer, and raise his/her the goods
-            session.query(Player).filter(Player.id == buy_id). \
-                update({'goods': Player.goods + amount, 'coins': Player.coins - price})
-
-            session.commit()
-            print("trade success")
-
-    def trade_example(self, Session) -> None:
-        with Session as session:
-            # create two players
-            # player 1: id is "1", has only 100 coins.
-            # player 2: id is "2", has 114514 coins, and 20 goods.
-            session.add(Player(id="1", coins=100, goods=0))
-            session.add(Player(id="2", coins=114514, goods=20))
-            session.commit()
-
-        # player 1 wants to buy 10 goods from player 2.
-        # it will cost 500 coins, but player 1 cannot afford it.
-        # so this trade will fail, and nobody will lose their coins or goods
-        self.trade(Session, sell_id="2", buy_id="1", amount=10, price=500)
-
-        # then player 1 has to reduce the incoming quantity to 2.
-        # this trade will be successful
-        self.trade(Session, sell_id="2", buy_id="1", amount=2, price=100)
-
-        with Session as session:
-            traders = session.query(Player).filter(Player.id.in_(("1", "2"))).all()
-            for player in traders:
-                print(player)
-            session.commit()
+        session.commit()

@@ -14,13 +14,12 @@ def main():
 
         print(
             f"Connection to the {engine} for user {engine} created successfully.")
-        Session = DatabaseConnection().get_sessions()
+        session = DatabaseConnection().get_sessions()
     except Exception as ex:
         print("Connection/Session could not be made due to the following error: \n", ex)
 
     if Session is not None:
-        QueryPlayer().simple_example(Session)
-        QueryPlayer().trade_example(Session)
+        QueryPlayer().simple_example(session)
     else:
         print("Session could not be made")
 
