@@ -1,4 +1,5 @@
-from watcher.schemas.parser.data_parser import make_json
+from watcher.parser.data_parser import make_json
+
 
 def main():
     # Chemin du fichier CSV d'entrée
@@ -9,6 +10,7 @@ def main():
 
     # Appel de la fonction pour convertir le CSV en JSON
     make_json(csv_file_path, json_file_path)
+
 
 if __name__ == "__main__":
     main()
