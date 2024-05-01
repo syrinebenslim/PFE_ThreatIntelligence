@@ -38,28 +38,35 @@ class QueryPlayer:
 
         return players
 
-    def simple_example(self, session) -> None:
-        # create a player, who has a coin and a goods.
-        session.add(Player(id="test", coins=1, goods=1))
-        # get this player, and print it.
-        get_test_stmt = select(Player).where(Player.id == "test")
-        for player in session.scalars(get_test_stmt):
-            print(player)
+        import uuid
 
-        # create players with bulk inserts.
-        # insert 1919 players totally, with 114 players per batch.
-        # each player has a random UUID
-        player_list = self.random_player(1919)
-        for idx in range(0, len(player_list), 114):
-            session.bulk_save_objects(player_list[idx:idx + 114])
+        def simple_example(self, session) -> None:
+            # Vérifier si l'ID "test" existe déjà
+            test_player = session.query(Player).filter_by(id="test").first()
+            if test_player is None:
+                # Si l'ID "test" n'existe pas, l'insérer
+                session.add(Player(id="test", coins=1, goods=1))
 
-        # print the number of players
-        count = session.query(func.count(Player.id)).scalar()
-        print(f'number of players: {count}')
+            # get this player, and print it.
+            get_test_stmt = select(Player).where(Player.id == "test")
+            for player in session.scalars(get_test_stmt):
+                print(player)
 
-        # print 3 players.
-        three_players = session.query(Player).limit(3).all()
-        for player in three_players:
-            print(player)
+            # create players with bulk inserts.
+            # insert 1919 players totally, with 114 players per batch.
+            # each player has a random UUID
+            player_list = self.random_player(1919)
+            for idx in range(0, len(player_list), 114):
+                session.bulk_save_objects(player_list[idx:idx + 114])
 
-        session.commit()
+            # print the number of players
+            count = session.query(func.count(Player.id)).scalar()
+            print(f'number of players: {count}')
+
+            # print 3 players.
+            three_players = session.query(Player).limit(3).all()
+            for player in three_players:
+                print(player)
+
+            session.commit()
+
