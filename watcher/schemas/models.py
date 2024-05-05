@@ -1,18 +1,18 @@
-from typing import List
-
-from sqlalchemy import String, Column, Integer, select, func
+from sqlalchemy import Column, TIMESTAMP, JSON, VARBINARY
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
 
-class Player(Base):
-    __tablename__ = "player"
+class ShadowServerFeeds(Base):
+    __abstract__ = True
+    uuid = Column(VARBINARY(16), primary_key=True)
+    payload = Column(JSON)
+    ts = Column(TIMESTAMP)
 
-    id = Column(String(36), primary_key=True)
-    coins = Column(Integer)
-    goods = Column(Integer)
+
+class Event4MicrosoftSinkhole(ShadowServerFeeds):
+    __tablename__ = "event4_microsoft_sinkhole "
 
     def __repr__(self):
-        return f'Player(id={self.id!r}, coins={self.coins!r}, goods={self.goods!r})'
-
+        return f'Event4MicrosoftSinkhole(id={self.uuid!r}, payload={self.payload!r}, ts={self.ts!r})'
