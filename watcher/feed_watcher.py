@@ -1,61 +1,67 @@
-
-
 import os
+import threading
 import time
 
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-
-from watcher.feed_parsers_shadow import FeedParser
+import watchdog.events
 from watchdog.events import PatternMatchingEventHandler
+from watchdog.observers import Observer
+
+from watcher.event_handlers import ServerWorkSync
+from watcher.feed_parsers_shadow import FeedParser
+
 # Define the directory to monitor
-directory_to_watch = '/data/vulnerabilities'
+directory_to_watch = '/home/zouaoui'
 
 
 # Define a custom handler to handle file creation events
 class FeedEventHandler(PatternMatchingEventHandler):
-    def on_created(self, event):
-        print("bloc creation")
-        try:
-            if event.is_directory:
-                print(f"Directory created: {event.src_path}")
-            else:
-                print(f"File created: {event.src_path}")
-                basename = os.path.basename(event.src_path)
-                print(FeedParser(basename).parse_feed_name())
-        except Exception as e:
-            print(f'Error in on_created event handler: {e}')
 
-    def on_modified(self, event):
-        try:
-            print(f"File modified: {event.src_path}")
-            print("bloc modification")
+    def __init__(self, sftp_client, local_dir, remote_dir):
+        watchdog.events.PatternMatchingEventHandler.__init__(patterns=["*.csv"],
+                                                             ignore_patterns=[],
+                                                             ignore_directories=True, case_sensitive=False)
+        self.sftp_client = sftp_client
+        self.local_dir = local_dir
+        self.remote_dir = remote_dir
+        super().__init__()
 
-        except Exception as e:
-            print(f'Error in on_created event handler: {e}')
+    @staticmethod
+    def on_any_event(event):
+        if event.is_directory:
+            return None
 
+        elif event.event_type == 'created':
+            # Take any action here when a file is first created.
+            print("Received created event - %s." % event.src_path)
+            basename = os.path.basename(event.src_path)
+            print(FeedParser(basename).parse_feed_name())
+
+        elif event.event_type == 'modified':
+            # Taken any action here when a file is modified.
+            print("Received modified event - %s." % event.src_path)
 
 
 # Create an observer to watch the directory
 
 class FeedWatcher:
-    print(directory_to_watch)
-    print("new code")
-    observer = Observer()
-    observer.schedule(FeedEventHandler(patterns=["*.csv"],
-                              ignore_patterns=[],
-                              ignore_directories=True
-                              ), directory_to_watch, recursive=True)
 
-    # Start the observer
-    observer.start()
+    def __init__(self, ssh_client, localpath, remotepath):
+        self.ssh_client = ssh_client
+        self.localpath = localpath
+        self.remotepath = remotepath
+        self.observer = Observer()
 
-    try:
-        while True:
-            time.sleep(3)
-    except KeyboardInterrupt:
-        # Stop the observer if Ctrl+C is pressed
-        observer.stop()
+    def run(self):
+        self.observer.schedule(
+            ServerWorkSync(self.ssh_client, localpath=self.localpath, remotepath=self.remotepath,verbose=True),
+            self.localpath, recursive=True)
+        observer_thread = threading.Thread(target=self.observer.start)
+        observer_thread.start()
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            self.observer.stop()
+            print("Error")
 
-    # Wait for the observer's thread to finish
-    observer.join()
+        observer_thread.join()
