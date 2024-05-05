@@ -12,7 +12,7 @@ class ShadowServerFeeds(Base):
 
 
 class Event4MicrosoftSinkhole(ShadowServerFeeds):
-    __tablename__ = "event4_microsoft_sinkhole "
+    __tablename__ = "event4_microsoft_sinkhole"
 
     def __repr__(self):
         return f'Event4MicrosoftSinkhole(id={self.uuid!r}, payload={self.payload!r}, ts={self.ts!r})'
