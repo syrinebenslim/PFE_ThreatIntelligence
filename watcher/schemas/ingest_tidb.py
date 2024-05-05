@@ -1,3 +1,5 @@
+import dataclasses
+
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import sessionmaker
@@ -24,6 +26,7 @@ class DatabaseConnection:
         return sessionmaker(bind=self.engine)
 
 
+@dataclasses.dataclass
 class QueryShadowServerFeeds:
 
     def append_feeds(self, session, list_feeds):

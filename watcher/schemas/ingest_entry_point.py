@@ -34,7 +34,7 @@ def main():
         for data in jsons_data:
             event4_microsoft_sinkhole_list.append(Event4MicrosoftSinkhole(uuid=uuid.uuid4().bytes, payload=data))
 
-        QueryShadowServerFeeds().append_feeds(event4_microsoft_sinkhole_list)
+        QueryShadowServerFeeds().append_feeds(session,event4_microsoft_sinkhole_list)
 
     else:
         print("Session could not be made")
