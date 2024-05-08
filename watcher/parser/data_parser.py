@@ -13,3 +13,5 @@ class Csv2Json:
         df = pd.read_csv(self.input_file_csv, delimiter=self.delimiter)
         # Open a csv reader called DictReader
         return df.to_json(orient='records', lines=True).splitlines()
+
+

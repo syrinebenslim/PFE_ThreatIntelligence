@@ -2,7 +2,7 @@ import dataclasses
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 
 class DatabaseConnection:
@@ -24,6 +24,22 @@ class DatabaseConnection:
 
     def get_sessions(self):
         return sessionmaker(bind=self.engine)
+
+    def get_session(self):
+        session = None
+        Base = declarative_base()
+        try:
+
+            Base.metadata.create_all(self.engine)
+
+            print(
+                f"Connection to the {self.engine} for user {self.engine} created successfully.")
+            Session = DatabaseConnection().get_sessions()
+            session = Session()
+
+        except Exception as ex:
+            print("Connection/Session could not be made due to the following error: \n", ex)
+        return session
 
 
 @dataclasses.dataclass

@@ -1,0 +1,9 @@
+sftp:
+  sftp_host:     Oz-Ware Purchase Invoice
+  sftp_user:        2012-08-06
+  sftp_password:
+tidb:
+  tidb_host:
+  tidb_port:
+  tidb_user:
+  tidb_password:
