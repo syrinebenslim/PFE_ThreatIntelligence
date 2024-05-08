@@ -42,9 +42,11 @@ class FeedEventHandler(PatternMatchingEventHandler):
                 jsons_data = Csv2Json(event.src_path) \
                     .make_json()
                 json_list = []
+                case_class = self.to_camel_case(name)
+                print(f"CLASS  <{case_class}>")
                 for data in jsons_data:
                     json_list.append(
-                        globals()[self.to_camel_case(name)](uuid=uuid.uuid4().bytes, payload=data))
+                        globals()[case_class](uuid=uuid.uuid4().bytes, payload=data))
 
                 QueryShadowServerFeeds().append_feeds(self.db_session, json_list)
 
