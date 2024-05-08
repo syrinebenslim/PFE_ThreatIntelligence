@@ -68,7 +68,7 @@ class FeedEventHandler(PatternMatchingEventHandler):
         # printing result
         print("The camel case string is : " + str(res))
 
-        return str(res).capitalize()
+        return str(res).title()
 
 
 # Create an observer to watch the directory
