@@ -41,7 +41,7 @@ class SFTPServerClient:
             print(f"Error while getting the list of files")
 
     def download_files(self, remote_filepath, local_filepath):
-        print(f"downloading file {remote_filepath} to remote {local_filepath}")
+        print(f"downloading file {remote_filepath} to local {local_filepath}")
 
         sftp_client = self.__SSH_Client.open_sftp()
         try:

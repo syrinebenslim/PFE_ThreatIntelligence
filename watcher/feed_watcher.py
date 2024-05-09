@@ -19,7 +19,7 @@ directory_to_watch = '/home/zouaoui'
 class FeedEventHandler(PatternMatchingEventHandler):
 
     def __init__(self):
-        watchdog.events.PatternMatchingEventHandler.__init__(patterns=["*.csv"],
+        watchdog.events.PatternMatchingEventHandler.__init__(self, patterns=["*.csv"],
                                                              ignore_patterns=[],
                                                              ignore_directories=True, case_sensitive=False)
 
