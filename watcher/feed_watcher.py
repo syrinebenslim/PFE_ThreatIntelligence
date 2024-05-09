@@ -38,8 +38,8 @@ class FeedEventHandler(PatternMatchingEventHandler):
             print(name)
 
             if self.db_session is not None:
-
-                jsons_data = Csv2Json(event.src_path) \
+                print(event.src_path)
+                jsons_data = Csv2Json(input_file_csv=event.src_path) \
                     .make_json()
                 json_list = []
                 case_class = self.to_camel_case(name)
