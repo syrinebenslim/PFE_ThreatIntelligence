@@ -48,7 +48,8 @@ class FeedEventHandler(PatternMatchingEventHandler):
 
             if self.db_session is not None:
                 print(event.src_path)
-                jsons_data = Csv2Json(input_file_csv=event.src_path) \
+                jsons_data = Csv2Json(input_file_csv="/data/vulnerabilities/2022-09-19-event4_microsoft_sinkhole"
+                                                     "-tunisia-geo.csv") \
                     .make_json()
                 json_list = []
                 case_class = self.to_camel_case(name)
