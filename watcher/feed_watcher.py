@@ -12,7 +12,6 @@ from watcher.feed_parsers_shadow import FeedParser
 from watcher.parser.data_parser import Csv2Json
 from watcher.schemas.ingest_tidb import DatabaseConnection, QueryShadowServerFeeds
 
-directory_to_watch = '/home/zouaoui'
 
 
 # Define a custom handler to handle file creation events
@@ -41,6 +40,7 @@ class FeedEventHandler(PatternMatchingEventHandler):
                     time.sleep(1)
                     continue
             # Take any action here when a file is first created.
+            file.seek(0)
             print("Received created event - %s." % event.src_path)
             basename = os.path.basename(event.src_path)
             data, name = FeedParser(basename).parse_feed_name()
