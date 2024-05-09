@@ -10,8 +10,6 @@ class Csv2Json:
     def make_json(self):
         # create a dictionary
 
-        df = pd.read_csv(self.input_file_csv, delimiter=self.delimiter)
+        df = pd.read_csv(filepath_or_buffer=self.input_file_csv, delimiter=self.delimiter)
         # Open a csv reader called DictReader
         return df.to_json(orient='records', lines=True).splitlines()
-
-

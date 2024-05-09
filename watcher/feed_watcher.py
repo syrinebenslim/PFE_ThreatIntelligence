@@ -31,6 +31,15 @@ class FeedEventHandler(PatternMatchingEventHandler):
             return None
 
         elif event.event_type == 'created':
+
+            file = None
+            while file is None:
+                try:
+                    file = open(event.src_path)
+                except OSError:
+                    print('Waiting for file transfer....')
+                    time.sleep(1)
+                    continue
             # Take any action here when a file is first created.
             print("Received created event - %s." % event.src_path)
             basename = os.path.basename(event.src_path)
