@@ -7,7 +7,7 @@ from sqlalchemy.orm import declarative_base
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 from watcher.parser.data_parser import Csv2Json
 from watcher.schemas.ingest_tidb import DatabaseConnection, QueryShadowServerFeeds
-from watcher.schemas.models import Event4MicrosoftSinkhole
+from watcher.schemas import Event4MicrosoftSinkhole
 
 
 def main():

@@ -6,13 +6,12 @@ from watcher.clients.sftp import SFTPServerClient
 # Press Maj+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 from watcher.feed_parsers_shadow import FeedParser
-from watcher.parser.data_parser import Csv2Json
 from watcher.schemas.ingest_tidb import QueryShadowServerFeeds, DatabaseConnection
 
 BUFSIZE = 8 * 1024
 
 
-def to_camel_case(self, test_str):
+def to_camel_case(test_str):
     # printing original string
     print("The original string is : " + str(test_str))
 
@@ -54,8 +53,14 @@ def main():
                 case_class = to_camel_case(name)
                 print(f"CLASS  <{case_class}>")
                 for data in jsons_data:
-                    json_list.append(
-                        globals()[case_class](uuid=uuid.uuid4().bytes, payload=data))
+                    import_module = "watcher.schemas"
+                    modules = import_module.split(".")
+                    module = __import__(modules[0])
+                    for mod in modules[1:]:
+                        module = getattr(module, mod)
+                    class_ = getattr(module, case_class)
+                    instance = class_(uuid=uuid.uuid4().bytes, payload=data)
+                    json_list.append(instance)
 
                 QueryShadowServerFeeds().append_feeds(db_session, json_list)
 
@@ -63,11 +68,6 @@ def main():
                 print(f"data copied to local {local_file_path}")
                 client_sftp.rename_files(remote_server_path, remote_archive_file_path)
                 print(f"data moved  to remote {remote_archive_file_path}")
-
-
-
-
-
 
             except IOError as e:
                 print("error during uploading files")
