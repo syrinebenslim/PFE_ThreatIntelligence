@@ -49,8 +49,7 @@ class FeedEventHandler(PatternMatchingEventHandler):
             if self.db_session is not None:
                 print(event.src_path)
                 print("ENDURR")
-                jsons_data = Csv2Json(input_file_csv="/data/vulnerabilities/2022-09-19-event4_microsoft_sinkhole"
-                                                     "-tunisia-geo.csv") \
+                jsons_data = Csv2Json(input_file_csv=event.src_path.strip()) \
                     .make_json()
                 json_list = []
                 case_class = self.to_camel_case(name)
@@ -80,8 +79,8 @@ class FeedEventHandler(PatternMatchingEventHandler):
 
         # printing result
         print("The camel case string is : " + str(res))
-
-        return str(res).title()
+        text= str(res)
+        return text[0].upper() + text[1:]
 
 
 # Create an observer to watch the directory
