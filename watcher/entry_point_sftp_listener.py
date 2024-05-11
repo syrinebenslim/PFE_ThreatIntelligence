@@ -1,5 +1,4 @@
 # This is a sample Python script.
-import io
 import os
 import uuid
 
@@ -11,20 +10,6 @@ from watcher.parser.data_parser import Csv2Json
 from watcher.schemas.ingest_tidb import QueryShadowServerFeeds, DatabaseConnection
 
 BUFSIZE = 8 * 1024
-
-
-def fetch_file_as_bytesIO(sftp, path):
-    """
-    Using the sftp client it retrieves the file on the given path by using pre fetching.
-    :param sftp: the sftp client
-    :param path: path of the file to retrieve
-    :return: bytesIO with the file content
-    """
-    with sftp.file(path, mode='rb') as file:
-        file_size = file.stat().st_size
-        file.prefetch(file_size)
-        file.set_pipelined()
-        return io.BytesIO(file.read(file_size))
 
 
 def to_camel_case(self, test_str):
@@ -58,12 +43,12 @@ def main():
 
                 remote_server_path = f"{data_vulnerabilities_}{remote_file}"
                 local_file_path = f"/data/vulnerabilities/{remote_file}"
-                file_byte = fetch_file_as_bytesIO(client_sftp, remote_server_path)
                 basename = os.path.basename(remote_server_path)
                 data, name = FeedParser(basename).parse_feed_name()
                 print(name)
-                jsons_data = Csv2Json(input_file_csv=file_byte) \
-                    .make_json()
+                df = client_sftp.read_csv_sftp(remote_server_path)
+                jsons_data = df.to_json(orient='records', lines=True).splitlines()
+
                 print(jsons_data)
                 json_list = []
                 case_class = to_camel_case(name)

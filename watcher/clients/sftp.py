@@ -1,3 +1,4 @@
+import pandas as pd
 import paramiko
 
 
@@ -29,6 +30,14 @@ class SFTPServerClient:
     def disconnect(self):
         self.__SSH_Client.close()
         print(f"{self.__userName} is disconnected to server  {self.__hostName}:{self.__port}")
+
+    def read_csv_sftp(self, remoteFilePath, delimiter=","):
+        sftp_client = self.__SSH_Client.open_sftp()
+        remote_file = sftp_client.open(remoteFilePath)
+        dataframe = pd.read_csv(filepath_or_buffer=remote_file, delimiter=delimiter)
+        remote_file.close()
+        sftp_client.close()
+        return dataframe
 
     def getListofFiles(self, remoteFilePath):
         sftp_client = self.__SSH_Client.open_sftp()
