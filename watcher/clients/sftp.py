@@ -93,3 +93,15 @@ class SFTPServerClient:
         stdin, stdout, stderr = self.__SSH_Client.exec_command(command)
         print(stdout.readlines())
         print(stderr.readlines())
+
+    def check_exist(self, remote_filepath):
+        print(f"check exist file {remote_filepath}")
+
+        sftp_client = self.__SSH_Client.open_sftp()
+        try:
+            sftp_client.stat(remote_filepath)
+            print(f"File: {remote_filepath} exist ")
+        except IOError as err:
+            print(f"File: {remote_filepath} dosnt not exist ")
+            return False
+        return True
