@@ -1,8 +1,18 @@
-from sqlalchemy import Column, TIMESTAMP, JSON, VARBINARY
+from sqlalchemy import Column, TIMESTAMP, JSON, VARBINARY, Integer, BigInteger, String
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
+
+class MispIOC(Base):
+    __tablename__ = 'misp_iocs'
+
+    uuid = Column(VARBINARY(16), primary_key=True, nullable=False)
+    date = Column(String)
+    info = Column(String)
+    threat_level_id = Column(Integer)
+    timestamp = Column(BigInteger)
+    raw_data = Column(JSON)
 
 class ShadowServerFeeds(Base):
     __abstract__ = True

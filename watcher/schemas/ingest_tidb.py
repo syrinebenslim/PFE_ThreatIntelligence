@@ -52,3 +52,4 @@ class QueryShadowServerFeeds:
     def append_feed(self, session, feed):
         session.add(feed)
         session.commit()
+
