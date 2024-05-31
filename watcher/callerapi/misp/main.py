@@ -1,4 +1,4 @@
-from callerapi.misp.reader import MispReader
+from watcher.callerapi.misp.reader import MispReader
 
 
 def main():

@@ -24,7 +24,7 @@ class MispReader:
         json_list = []
         for index, row in df.iterrows():
             misp_ioc = MispIOC(
-                uuid=row['uuid'],  # Assuming UUID is a string and needs encoding
+                uuid=row['uuid'].encode('utf-8'),  # Assuming UUID is a string and needs encoding
                 date=row['date'],
                 info=row['info'],
                 threat_level_id=int(row['threat_level_id']),
@@ -34,8 +34,6 @@ class MispReader:
             json_list.append(misp_ioc)
 
         QueryShadowServerFeeds().append_feeds(db_session, json_list)
-
-
 
     def read_manifest(self):
         response = self.get_data_from_api("/manifest.json")
@@ -47,7 +45,7 @@ class MispReader:
         return rows
 
     def get_raw_data(self, uuid):
-        return self.get_data_from_api("/" + uuid + ".json")
+        return self.get_data_from_api("/"+uuid+".json")
 
     def get_data_from_api(self, prefix=None):
         try:
