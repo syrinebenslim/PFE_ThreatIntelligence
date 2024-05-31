@@ -5,6 +5,9 @@ import sys
 import pandas as pd
 import requests
 
+from watcher.schemas import MispIOC
+from watcher.schemas.ingest_tidb import DatabaseConnection, QueryShadowServerFeeds
+
 
 @dataclasses.dataclass
 class MispReader:
@@ -13,10 +16,24 @@ class MispReader:
     def write_misp_events(self):
         manifest_rows = self.read_manifest()
         df = pd.json_normalize(manifest_rows, 'Tag',
-                               ['uuid', 'info', 'date', 'analysis', 'threat_level_id', 'timestamp']).filter(['uuid', 'info', 'date', 'analysis', 'threat_level_id', 'timestamp'])
+                               ['uuid', 'info', 'date', 'analysis', 'threat_level_id', 'timestamp']).filter(
+            ['uuid', 'info', 'date', 'analysis', 'threat_level_id', 'timestamp'])
 
         df['raw_data'] = df['uuid'].map(self.get_raw_data)
-        return df
+        db_session = DatabaseConnection().get_session()
+        json_list = []
+        for index, row in df.iterrows():
+            misp_ioc = MispIOC(
+                uuid=row['uuid'].encode('utf-8'),  # Assuming UUID is a string and needs encoding
+                date=row['date'],
+                info=row['info'],
+                threat_level_id=int(row['threat_level_id']),
+                timestamp=int(row['timestamp']),
+                raw_data=row['raw_data']
+            )
+            json_list.append(misp_ioc)
+
+        QueryShadowServerFeeds().append_feeds(db_session, json_list)
 
     def read_manifest(self):
         response = self.get_data_from_api("/manifest.json")

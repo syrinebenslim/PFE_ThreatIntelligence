@@ -1,14 +1,25 @@
-from sqlalchemy import Column, TIMESTAMP, JSON, VARBINARY
+from sqlalchemy import Column, TIMESTAMP, JSON, BigInteger, Integer, String
 from sqlalchemy.orm import declarative_base
+
 
 Base = declarative_base()
 
 
 class ShadowServerFeeds(Base):
     __abstract__ = True
-    uuid = Column(VARBINARY(16), primary_key=True)
+    uuid = Column(String(36), primary_key=True)
     payload = Column(JSON)
     ts = Column(TIMESTAMP)
+
+class MispIOC(Base):
+    __tablename__ = 'misp_iocs'
+
+    uuid = Column(String(36), primary_key=True, nullable=False)
+    date = Column(String)
+    info = Column(String)
+    threat_level_id = Column(Integer)
+    timestamp = Column(BigInteger)
+    raw_data = Column(JSON)
 
 
 class Event4MicrosoftSinkhole(ShadowServerFeeds):
