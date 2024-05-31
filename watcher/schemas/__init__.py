@@ -1,4 +1,4 @@
-from sqlalchemy import Column, TIMESTAMP, JSON, BigInteger, Integer, String
+from sqlalchemy import Column, TIMESTAMP, JSON, BigInteger, Integer, String, VARBINARY
 from sqlalchemy.orm import declarative_base
 
 
@@ -7,14 +7,14 @@ Base = declarative_base()
 
 class ShadowServerFeeds(Base):
     __abstract__ = True
-    uuid = Column(String(36), primary_key=True)
+    uuid = Column(VARBINARY(16), primary_key=True)
     payload = Column(JSON)
     ts = Column(TIMESTAMP)
 
 class MispIOC(Base):
     __tablename__ = 'misp_iocs'
 
-    uuid = Column(String(36), primary_key=True, nullable=False)
+    uuid = Column(VARBINARY(16), primary_key=True)
     date = Column(String)
     info = Column(String)
     threat_level_id = Column(Integer)

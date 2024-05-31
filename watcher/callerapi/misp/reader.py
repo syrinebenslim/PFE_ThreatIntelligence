@@ -1,6 +1,7 @@
 import dataclasses
 import json
 import sys
+import uuid
 
 import pandas as pd
 import requests
@@ -24,7 +25,7 @@ class MispReader:
         json_list = []
         for index, row in df.iterrows():
             misp_ioc = MispIOC(
-                uuid=row['uuid'].encode('utf-8'),  # Assuming UUID is a string and needs encoding
+                uuid=uuid.uuid4().bytes,  # Assuming UUID is a string and needs encoding
                 date=row['date'],
                 info=row['info'],
                 threat_level_id=int(row['threat_level_id']),
