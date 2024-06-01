@@ -6,7 +6,11 @@ def main():
 
     w = MispReader("https://www.botvrij.eu/data/feed-osint")
     df = w.write_misp_events()
-    print(df.info())
+    if df is not None:
+        print(df.info())
+    else:
+        print("DataFrame is None")
+
 
 
 # Press the green button in the gutter to run the script.
