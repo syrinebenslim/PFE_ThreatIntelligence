@@ -1,7 +1,7 @@
 
 [tool.poetry]
 name = "watcher"
-version = "0.1.0"
+version = "0.17.0"
 description = "File watcher"
 authors = ["Syrine ben slim <syrinebenslim98@gmail.com>"]
 maintainers = ["Syrine ben slim <syrinebenslim98@gmail.com>"]
@@ -19,18 +19,19 @@ keywords = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "3.10"
 loguru = "*"
 psutil = "*"
 certifi = "^2023.11.17"
 watchdog = "4.0.0"
-SQLAlchemy = "2.0.29"
+SQLAlchemy = "1.4.52"
 PyMySQL = "1.1.0"
 python-dotenv = "1.0.0"
-pandas = "2.2.2"
+pandas = "2.1.4"
 paramiko = "3.4.0"
 colorama = "0.4.6"
 requests = "2.32.3"
+apache-airflow ="2.9.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
@@ -44,3 +45,6 @@ run = "watcher.main:main"
 
 [tool.poetry.urls]
 issues = "https://github.com/hackersandslackers/python-poetry-tutorial/issues"
+
+
+

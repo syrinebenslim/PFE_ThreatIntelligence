@@ -14,6 +14,15 @@ from watcher.schemas.ingest_tidb import DatabaseConnection, QueryShadowServerFee
 class MispReader:
     url: str
 
+    def convert_json_to_single_line(self,json_str):
+        try:
+            # Charger le JSON en tant qu'objet Python
+            data = json.loads(json_str)
+            # Convertir l'objet Python en une seule ligne de JSON
+            return json.dumps(data, separators=(',', ':'))
+        except json.JSONDecodeError as e:
+            return f"Error decoding JSON: {e}"
+
     def write_misp_events(self):
         manifest_rows = self.read_manifest()
         if not manifest_rows:
@@ -29,6 +38,7 @@ class MispReader:
             return None
 
         df['raw_data'] = df['uuid'].map(self.get_raw_data)
+        df['raw_data'] = df['raw_data'].apply(self.convert_json_to_single_line)
 
         db_session = DatabaseConnection().get_session()
         json_list = []
@@ -39,13 +49,21 @@ class MispReader:
                 info=row['info'],
                 threat_level_id=int(row['threat_level_id']),
                 timestamp=int(row['timestamp']),
-                raw_data=row['raw_data']
+                raw_data=self.clean_raw_data(row['raw_data'])
             )
             json_list.append(misp_ioc)
 
         QueryShadowServerFeeds().append_feeds(db_session, json_list)
 
         return df  # Ensure the DataFrame is returned
+
+    @staticmethod
+    def clean_raw_data(as_in: str):
+        output = as_in.strip('"').replace("\n", "").replace('\\', '').strip()
+        if output.startswith('"') and output.endswith('"'):
+            output = output[1:-1]
+        print(output)
+        return output
 
     def read_manifest(self):
         response = self.get_data_from_api("/manifest.json")

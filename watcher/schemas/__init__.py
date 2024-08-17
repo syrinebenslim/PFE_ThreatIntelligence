@@ -22,6 +22,18 @@ class MispIOC(Base):
     raw_data = Column(JSON)
 
 
+
+class MispIOCORGA(Base):
+    __tablename__ = 'misp_iocs_organisation'
+
+    orga_event = Column(String, primary_key=True)
+    ioc_type = Column(String)
+    ioc_value = Column(String)
+    timestamp = Column(BigInteger)
+    category = Column(String)
+    organisation = Column(String)
+
+
 class Event4MicrosoftSinkhole(ShadowServerFeeds):
     __tablename__ = "event4_microsoft_sinkhole"
 
