@@ -1,4 +1,5 @@
 # This is a sample Python script.
+import json
 import uuid
 
 from watcher.clients.sftp import SFTPServerClient
@@ -60,7 +61,7 @@ def main():
                 print(f"using CLASS  <{case_class}>")
                 for data in jsons_data:
                     class_ = get_model_db_name(case_class)
-                    instance = class_(uuid=uuid.uuid4().bytes, payload=data)
+                    instance = class_(uuid=uuid.uuid4().bytes, payload=json.loads(data))
                     json_list.append(instance)
 
                 QueryShadowServerFeeds().append_feeds(db_session, json_list)

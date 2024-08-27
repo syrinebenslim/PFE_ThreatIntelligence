@@ -1,7 +1,6 @@
 from sqlalchemy import Column, TIMESTAMP, JSON, BigInteger, Integer, String, VARBINARY
 from sqlalchemy.orm import declarative_base
 
-
 Base = declarative_base()
 
 
@@ -10,6 +9,7 @@ class ShadowServerFeeds(Base):
     uuid = Column(VARBINARY(16), primary_key=True)
     payload = Column(JSON)
     ts = Column(TIMESTAMP)
+
 
 class MispIOC(Base):
     __tablename__ = 'misp_iocs'
@@ -22,16 +22,34 @@ class MispIOC(Base):
     raw_data = Column(JSON)
 
 
-
 class MispIOCORGA(Base):
-    __tablename__ = 'misp_iocs_organisation'
+    __tablename__ = 'misp_iocs_organisation_final'
 
-    orga_event = Column(String, primary_key=True)
+    uuid = Column(VARBINARY(16), primary_key=True)
+    orga_event = Column(String)
     ioc_type = Column(String)
     ioc_value = Column(String)
     timestamp = Column(BigInteger)
     category = Column(String)
     organisation = Column(String)
+
+
+class ShadowVulnerabilities(Base):
+    __tablename__ = 'shadow_vulnerabilities'
+
+    uuid = Column(VARBINARY(16), primary_key=True)
+    vulnerability_name = Column(String)
+    asn_name = Column(String)
+    asn = Column(BigInteger)
+    ip = Column(String)
+    timestamp = Column(String)
+    city = Column(String)
+    region = Column(String)
+    geo = Column(String)
+    device_model = Column(String)
+    device_type = Column(String)
+    device_vendor = Column(String)
+    infection = Column(String)
 
 
 class Event4MicrosoftSinkhole(ShadowServerFeeds):
@@ -536,3 +554,24 @@ class Event4HoneypotDdosTarget(ShadowServerFeeds):
 
     def __repr__(self):
         return f'Event4HoneypotDdosTarget(id={self.uuid!r}, payload={self.payload!r}, ts={self.ts!r})'
+class Event4SinkholeDns(ShadowServerFeeds):
+    __tablename__ = "event4_sinkhole_dns"
+
+        return f'Event4SinkholeDns(id={self.uuid!r}, payload={self.payload!r}, ts={self.ts!r})'
+class Event4Sinkhole(ShadowServerFeeds):
+    __tablename__ = "event4_sinkhole"
+
+    def __repr__(self):
+        return f'Event4Sinkhole(id={self.uuid!r}, payload={self.payload!r}, ts={self.ts!r})'
+class Event4MicrosoftSinkhole(ShadowServerFeeds):
+    __tablename__ = "event4_microsoft_sinkhole"
+
+    def __repr__(self):
+        return f'Event4MicrosoftSinkhole(id={self.uuid!r}, payload={self.payload!r}, ts={self.ts!r})'
+class Event4Sinkhole(ShadowServerFeeds):
+    __tablename__ = "event4_sinkhole"
+
+    def __repr__(self):
+        return f'Event4Sinkhole(id={self.uuid!r}, payload={self.payload!r}, ts={self.ts!r})'
+
+

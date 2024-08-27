@@ -1,6 +1,5 @@
 import dataclasses
 import json
-import sys
 import uuid
 
 import pandas as pd
@@ -14,12 +13,12 @@ from watcher.schemas.ingest_tidb import DatabaseConnection, QueryShadowServerFee
 class MispReader:
     url: str
 
-    def convert_json_to_single_line(self,json_str):
+    def convert_json_to_single_line(self, json_str):
         try:
             # Charger le JSON en tant qu'objet Python
             data = json.loads(json_str)
             # Convertir l'objet Python en une seule ligne de JSON
-            return json.dumps(data, separators=(',', ':'))
+            return data
         except json.JSONDecodeError as e:
             return f"Error decoding JSON: {e}"
 
@@ -49,7 +48,7 @@ class MispReader:
                 info=row['info'],
                 threat_level_id=int(row['threat_level_id']),
                 timestamp=int(row['timestamp']),
-                raw_data=self.clean_raw_data(row['raw_data'])
+                raw_data=row['raw_data']
             )
             json_list.append(misp_ioc)
 
@@ -59,7 +58,7 @@ class MispReader:
 
     @staticmethod
     def clean_raw_data(as_in: str):
-        output = as_in.strip('"').replace("\n", "").replace('\\', '').strip()
+        output = as_in.replace("\n", "").replace('\\', '').strip()
         if output.startswith('"') and output.endswith('"'):
             output = output[1:-1]
         print(output)
@@ -85,22 +84,8 @@ class MispReader:
     def get_data_from_api(self, prefix=None):
         try:
             r = requests.get(self.url + prefix if prefix is not None else self.url, timeout=360)
-            r.raise_for_status()
-        except requests.exceptions.ConnectionError as errc:
-            print("\r\nError Connecting:", errc)
-            sys.exit()
-        except requests.exceptions.HTTPError as errh:
-            print("\r\nHttp Error:", errh)
-            sys.exit()
-        except requests.exceptions.Timeout as errt:
-            print("\r\nTimeout Error:", errt)
-            sys.exit()
-        except requests.exceptions.RequestException as err:
-            print("\r\nOOps: Something Else", err)
-            sys.exit()
-
-        if r.status_code == requests.codes.ok:
+            r.raise_for_status()  # Raises HTTPError for bad responses (4xx or 5xx)
             return r.text
-        else:
-            print("Error occurred when listing API content")
-            sys.exit()
+        except requests.RequestException as e:
+            print(f"HTTP Request failed: {e}")
+            return "KO"
