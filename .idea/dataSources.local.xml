@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal" created-in="PY-233.14475.56">
+    <data-source name="@newwwwww" uuid="f928083a-e1f8-4556-b28e-e99aa45db546">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>syrine</user-name>
+      <schema-mapping />
+    </data-source>
+  </component>
+</project>

@@ -40,30 +40,30 @@ def main():
     db_session = DatabaseConnection().get_session()
 
     if "sinkhole" in args.vul_name:
-        query = f"""SELECT JSON_EXTRACT(payload, "$.src_asn") AS ASN, JSON_EXTRACT(payload, "$.src_ip") AS IP, 
-                    JSON_EXTRACT(payload, "$.src_city") AS CITY, JSON_EXTRACT(payload, "$.src_geo") AS GEO,
-                    JSON_EXTRACT(payload, "$.src_region") AS REGION, JSON_EXTRACT(payload, "$.timestamp") AS TIMESTAMP,
+        query = f"""SELECT JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_asn")) AS ASN, JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_ip")) AS IP, 
+                    JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_city")) AS CITY, JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_geo")) AS GEO,
+                    JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_region")) AS REGION, STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(payload, "$.timestamp")), '%Y-%m-%d %H:%i:%s') AS TIMESTAMP,
                     JSON_EXTRACT(payload, "$.device_vendor") AS DEVICE_VENDOR, JSON_EXTRACT(payload, "$.device_type") AS DEVICE_TYPE, 
-                    JSON_EXTRACT(payload, "$.device_model") AS DEVICE_MODEL, JSON_EXTRACT(payload, "$.infection") AS INFECTION 
+                    JSON_EXTRACT(payload, "$.device_model") AS DEVICE_MODEL, JSON_EXTRACT(payload, "$.query_type") AS QUERY_TYPE, JSON_EXTRACT(payload, "$.query") AS QUERY,JSON_UNQUOTE(JSON_EXTRACT(payload, "$.infection")) AS INFECTION,JSON_UNQUOTE(JSON_EXTRACT(payload, "$.family")) AS FAMILY 
                     FROM {args.vul_name} """
     elif "honeypot" in args.vul_name:
-        query = f"""SELECT JSON_EXTRACT(payload, "$.src_ip") AS IP, JSON_EXTRACT(payload, "$.src_asn") AS ASN,
-                    JSON_EXTRACT(payload, "$.src_geo") AS GEO, JSON_EXTRACT(payload, "$.src_region") AS REGION,
+        query = f"""SELECT JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_ip")) AS IP, JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_asn")) AS ASN,
+                    JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_geo")) AS GEO, JSON_EXTRACT(payload, "$.src_region") AS REGION,
                     JSON_EXTRACT(payload, "$.src_city") AS CITY, JSON_EXTRACT(payload, "$.device_vendor") AS DEVICE_VENDOR,
                     JSON_EXTRACT(payload, "$.device_type") AS DEVICE_TYPE, JSON_EXTRACT(payload, "$.device_model") AS DEVICE_MODEL,
-                    JSON_EXTRACT(payload, "$.protocol") AS PROTOCOL, JSON_EXTRACT(payload, "$.timestamp") AS TIMESTAMP,
+                    JSON_EXTRACT(payload, "$.protocol") AS PROTOCOL, STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(payload, "$.timestamp")), '%Y-%m-%d %H:%i:%s') AS TIMESTAMP,
                     JSON_EXTRACT(payload, "$.username") AS USERNAME, JSON_EXTRACT(payload, "$.password") AS PASSWORD,
                     JSON_EXTRACT(payload, "$.payload") AS PAYLOAD, JSON_EXTRACT(payload, "$.vulnerability_id") AS VULNERABILITY_ID,
                     JSON_EXTRACT(payload, "$.vulnerability_score") AS VULNERABILITY_SCORE, JSON_EXTRACT(payload, "$.vulnerability_severity") AS VULNERABILITY_SEVERITY,
-                    JSON_EXTRACT(payload, "$.count") AS COUNT, JSON_EXTRACT(payload, "$.bytes") AS BYTES, JSON_EXTRACT(payload, "$.avg_pps") AS AVG_PPS,
-                    JSON_EXTRACT(payload, "$.max_pps") AS MAX_PPS, JSON_EXTRACT(payload, "$.threat_tactic_id") AS THREAT_TACTIC_ID,
+                    
+                     JSON_EXTRACT(payload, "$.threat_tactic_id") AS THREAT_TACTIC_ID,
                     JSON_EXTRACT(payload, "$.threat_technique_id") AS THREAT_TECHNIQUE_ID, JSON_EXTRACT(payload, "$.target_vendor") AS TARGET_VENDOR,
                     JSON_EXTRACT(payload, "$.target_product") AS TARGET_PRODUCT, JSON_EXTRACT(payload, "$.target_class") AS TARGET_CLASS
                     FROM {args.vul_name} """
     else:
-        query = f"""SELECT JSON_EXTRACT(payload, "$.asn") AS ASN, JSON_EXTRACT(payload, "$.ip") AS IP, 
-                    JSON_EXTRACT(payload, "$.city") AS CITY, JSON_EXTRACT(payload, "$.geo") AS GEO,
-                    JSON_EXTRACT(payload, "$.region") AS REGION, JSON_EXTRACT(payload, "$.timestamp") AS TIMESTAMP 
+        query = f"""SELECT JSON_UNQUOTE(JSON_EXTRACT(payload, "$.asn")) AS ASN, JSON_UNQUOTE(JSON_EXTRACT(payload, "$.ip")) AS IP, 
+                    JSON_UNQUOTE(JSON_EXTRACT(payload, "$.city")) AS CITY, JSON_EXTRACT(payload, "$.geo") AS GEO,
+                    JSON_EXTRACT(payload, "$.region") AS REGION, STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(payload, "$.timestamp")), '%Y-%m-%d %H:%i:%s') AS TIMESTAMP 
                     FROM {args.vul_name} """
 
     results = db_session.execute(text(query)).fetchall()
@@ -93,7 +93,11 @@ def main():
                 device_vendor=row.get('DEVICE_VENDOR', None),
                 device_type=row.get('DEVICE_TYPE', None),
                 device_model=row.get('DEVICE_MODEL', None),
+                query_type=row.get('QUERY_TYPE', None),
+                query=row.get('QUERY', None),
+
                 infection=row.get('INFECTION', None),
+                family=row.get('FAMILY', None),
                 vulnerability_name=row['vulnerability_name']
             )
         elif "honeypot" in args.vul_name:
@@ -116,16 +120,16 @@ def main():
                 vulnerability_id=row.get('VULNERABILITY_ID', None),
                 vulnerability_score=row.get('VULNERABILITY_SCORE', None),
                 vulnerability_severity=row.get('VULNERABILITY_SEVERITY', None),
-                count=row.get('COUNT', None),
-                bytes=row.get('BYTES', None),
-                avg_pps=row.get('AVG_PPS', None),
-                max_pps=row.get('MAX_PPS', None),
+
                 threat_tactic_id=row.get('THREAT_TACTIC_ID', None),
                 threat_technique_id=row.get('THREAT_TECHNIQUE_ID', None),
                 target_vendor=row.get('TARGET_VENDOR', None),
                 target_product=row.get('TARGET_PRODUCT', None),
                 target_class=row.get('TARGET_CLASS', None),
+                family=row.get('FAMILY', None),
                 vulnerability_name=row['vulnerability_name']
+
+
             )
         else:
             misp_ioc = ShadowVulnerabilities(

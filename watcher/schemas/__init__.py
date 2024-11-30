@@ -42,7 +42,7 @@ class ShadowVulnerabilities(Base):
     asn_name = Column(String)
     asn = Column(BigInteger)
     ip = Column(String)
-    timestamp = Column(String)
+    timestamp = Column(TIMESTAMP)
     city = Column(String)
     region = Column(String)
     geo = Column(String)
@@ -50,6 +50,10 @@ class ShadowVulnerabilities(Base):
     device_type = Column(String)
     device_vendor = Column(String)
     infection = Column(String)
+    query_type = Column(String)
+    query= Column(String)
+    family=Column(String)
+
     # Nouveaux champs ajoutés
     protocol = Column(String)
     username = Column(String)
@@ -58,10 +62,6 @@ class ShadowVulnerabilities(Base):
     vulnerability_id = Column(String)
     vulnerability_score = Column(Float)
     vulnerability_severity = Column(String)
-    count = Column(Integer)
-    bytes = Column(BigInteger)
-    avg_pps = Column(Float)
-    max_pps = Column(Float)
     threat_tactic_id = Column(String)
     threat_technique_id = Column(String)
     target_vendor = Column(String)
@@ -153,6 +153,13 @@ class Event4HoneypotHttpScan(ShadowServerFeeds):
         return f'Event4HoneypotHttpScan(id={self.uuid!r}, payload={self.payload!r}, ts={self.ts!r})'
 
 
+class Event4HoneypotBruteForce(ShadowServerFeeds):
+    __tablename__ = "event4_honeypot_brute_force"
+
+    def __repr__(self):
+        return f'Event4HoneypotBruteForce(id={self.uuid!r}, payload={self.payload!r}, ts={self.ts!r})'
+
+
 class Event4HoneypotIcsScan(ShadowServerFeeds):
     __tablename__ = ".event4_honeypot_ics_scan "
 
@@ -166,7 +173,11 @@ class Event4HoneypotRdpScan(ShadowServerFeeds):
     def __repr__(self):
         return f'Event4HoneypotRdpScan(id={self.uuid!r}, payload={self.payload!r}, ts={self.ts!r})'
 
+class Event4SinkholeDns(ShadowServerFeeds):
+    __tablename__ = "event4_sinkhole_dns"
 
+    def __repr__(self):
+        return f'Event4SinkholeDns(id={self.uuid!r}, payload={self.payload!r}, ts={self.ts!r})'
 class Event4HoneypotSmbScan(ShadowServerFeeds):
     __tablename__ = "event4_honeypot_smb_scan"
 
