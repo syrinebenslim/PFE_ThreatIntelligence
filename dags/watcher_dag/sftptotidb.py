@@ -37,7 +37,7 @@ with DAG(
         catchup=False
 ) as dag:
     run_fetch_and_ingest = PythonOperator(
-        task_id='SFTP integration',
+        task_id='sftp_integration',
         python_callable=execute_main_sftp
     )
     transform_shadow_data = PythonOperator(
