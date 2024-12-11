@@ -41,7 +41,7 @@ with DAG(
         python_callable=execute_main_sftp
     )
     transform_shadow_data = PythonOperator(
-        task_id='transform data',
+        task_id='transform_data',
         python_callable=execute_main_transformation
     )
 
