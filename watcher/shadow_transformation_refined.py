@@ -45,7 +45,7 @@ class ShadowTransformationRefined:
                             JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_city")) AS CITY, JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_geo")) AS GEO,
                             JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_region")) AS REGION, STR_TO_DATE(JSON_UNQUOTE(JSON_EXTRACT(payload, "$.timestamp")), '%Y-%m-%d %H:%i:%s') AS TIMESTAMP,
                             JSON_EXTRACT(payload, "$.device_vendor") AS DEVICE_VENDOR, JSON_EXTRACT(payload, "$.device_type") AS DEVICE_TYPE, 
-                            JSON_EXTRACT(payload, "$.device_model") AS DEVICE_MODEL, JSON_EXTRACT(payload, "$.query_type") AS QUERY_TYPE, JSON_EXTRACT(payload, "$.query") AS QUERY,JSON_UNQUOTE(JSON_EXTRACT(payload, "$.infection")) AS INFECTION,JSON_UNQUOTE(JSON_EXTRACT(payload, "$.family")) AS FAMILY, JSON_EXTRACT(payload, "$.tag") AS TAG, JSON_EXTRACT(payload, "$.event_id") AS EVENT_ID
+                            JSON_EXTRACT(payload, "$.device_model") AS DEVICE_MODEL, JSON_EXTRACT(payload, "$.query_type") AS QUERY_TYPE, JSON_EXTRACT(payload, "$.query") AS QUERY,JSON_UNQUOTE(JSON_EXTRACT(payload, "$.infection")) AS INFECTION,JSON_UNQUOTE(JSON_EXTRACT(payload, "$.family")) AS FAMILY, JSON_EXTRACT(payload, "$.tag") AS TAG
                             FROM {vul_name} """
             elif "honeypot" in vul_name:
                 query = f"""SELECT JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_ip")) AS IP, JSON_UNQUOTE(JSON_EXTRACT(payload, "$.src_asn")) AS ASN,
@@ -75,7 +75,6 @@ class ShadowTransformationRefined:
        JSON_EXTRACT(payload, "$.infection") AS INFECTION,
        JSON_EXTRACT(payload, "$.family") AS FAMILY,
        JSON_EXTRACT(payload, "$.tag") AS TAG,
-       JSON_EXTRACT(payload, "$.event_id") AS EVENT_ID,
        JSON_EXTRACT(payload, "$.service") AS SERVICE
                             FROM {vul_name} """
             elif "scan" in vul_name:
@@ -129,7 +128,6 @@ class ShadowTransformationRefined:
                         query_type=row.get('QUERY_TYPE', None),
                         query=row.get('QUERY', None),
                         tag=row.get('TAG', None),
-                        event_id=row.get('EVENT_ID', None),
                         infection=row.get('INFECTION', None),
                         family=row.get('FAMILY', None),
                         vulnerability_name=row['vulnerability_name']
@@ -175,7 +173,6 @@ class ShadowTransformationRefined:
                         infection=row.get('INFECTION', None),
                         family=row.get('FAMILY', None),
                         tag=row.get('TAG', None),
-                        event_id=row.get('EVENT_ID', None),
                         service=row.get('SERVICE', None),
                         src_port=row.get('SRC_PORT', None),
                         vulnerability_name=row['vulnerability_name']

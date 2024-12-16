@@ -53,7 +53,6 @@ def main():
                            JSON_EXTRACT(payload, "$.family") AS Family, 
                            JSON_EXTRACT(payload, "$.infection") AS INFECTION,
                            JSON_EXTRACT(payload, "$.tag") AS TAG,
-                           JSON_EXTRACT(payload, "$.event_id") AS EVENT_ID,
                            JSON_EXTRACT(payload, "$.query") AS QUERY
                          
                     FROM {args.vul_name} """
@@ -96,7 +95,6 @@ def main():
        JSON_EXTRACT(payload, "$.infection") AS INFECTION,
        JSON_EXTRACT(payload, "$.family") AS FAMILY,
        JSON_EXTRACT(payload, "$.tag") AS TAG,
-       JSON_EXTRACT(payload, "$.event_id") AS EVENT_ID,
        JSON_EXTRACT(payload, "$.service") AS SERVICE
                     FROM {args.vul_name} """
     elif "scan" in args.vul_name:
@@ -155,7 +153,6 @@ def main():
                 infection=row.get('INFECTION', None),
                 family=row.get('FAMILY', None),
                 tag=row.get('TAG', None),
-                event_id=row.get('EVENT_ID', None),
                 vulnerability_name=row['vulnerability_name']
             )
         elif "honeypot" in args.vul_name:
@@ -199,7 +196,6 @@ def main():
                 infection=row.get('INFECTION', None),
                 family=row.get('FAMILY', None),
                 tag=row.get('TAG', None),
-                event_id=row.get('EVENT_ID', None),
                 service=row.get('SERVICE', None),
                 src_port=row.get('SRC_PORT', None),
                 vulnerability_name=row['vulnerability_name']
