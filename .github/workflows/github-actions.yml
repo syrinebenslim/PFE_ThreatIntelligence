@@ -20,12 +20,31 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pylint poetry
-        
+
       - name: Poetry Install
         run: poetry install --sync --no-interaction
       - name: Poetry package
         run: poetry build
-
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - name: Deploy to Local VM
+        env:
+          VM_USER: ${{ secrets.VM_USER }}
+          VM_PASSWORD: ${{ secrets.VM_PASSWORD }}
+          VM_IP: ${{ secrets.VM_IP }}
+        run: |
+          # Install sshpass for password-based SSH
+          sudo apt-get update && sudo apt-get install -y sshpass
+          
+          # Copy the built package to the VM
+          sshpass -p "$VM_PASSWORD" scp dist/*.whl $VM_USER@$VM_IP:/tmp/
+          
+          # SSH into the VM and install the package
+          sshpass -p "$VM_PASSWORD" ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP << EOF
+            python3 -m pip install /tmp/*.whl --no-cache-dir
+            rm -f /tmp/*.whl
+          EOF
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
