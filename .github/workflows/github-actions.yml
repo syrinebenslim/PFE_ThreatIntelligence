@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [ push ]
 jobs:
   Explore-GitHub-Actions:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -30,9 +30,9 @@ jobs:
           ls ${{ github.workspace }}
       - name: Deploy to Local VM
         env:
-          VM_USER: ${{ secrets.VM_USER }}
-          VM_PASSWORD: ${{ secrets.VM_PASSWORD }}
-          VM_IP: ${{ secrets.VM_IP }}
+          VM_USER: ${{ vars.VM_USER }}
+          VM_PASSWORD: ${{ vars.VM_PASSWORD }}
+          VM_IP: ${{ vars.VM_IP }}
         run: |
           # Install sshpass for password-based SSH
           sudo apt-get update && sudo apt-get install -y sshpass
