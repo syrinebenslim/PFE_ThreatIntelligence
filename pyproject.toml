@@ -1,7 +1,7 @@
 
 [tool.poetry]
 name = "watcher"
-version = "0.64.0"
+version = "0.72.0"
 description = "File watcher"
 authors = ["Syrine ben slim <syrinebenslim98@gmail.com>"]
 maintainers = ["Syrine ben slim <syrinebenslim98@gmail.com>"]
