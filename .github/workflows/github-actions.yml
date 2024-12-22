@@ -1,49 +1,43 @@
 name: Threat Intelligence GitHub Actions CI/CD pipeline
-
-on:
-  push:
-    branches:
-      - main  # Déclenche le workflow lorsque des modifications sont poussées sur la branche "main"
-
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [ push ]
 jobs:
   Explore-GitHub-Actions:
-    runs-on: self-hosted  # Exécute le workflow sur un runner auto-hébergé
-
+    runs-on: self-hosted
     steps:
-      # Étape 1 : Vérifier le code
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v4
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
-      # Étape 2 : Déboguer les variables
-      - name: Debug VM variables
+      - name: Poetry Install
+        run: poetry install --sync --no-interaction
+      - name: Poetry package
+        run: poetry build
+      - name: List files in the repository
         run: |
-          echo "VM_IP: ${{ vars.VM_IP }}"
-          echo "VM_USER: ${{ vars.VM_USER }}"
-          echo "VM_PASSWORD: ${{ vars.VM_PASSWORD }}"
-
-      # Étape 3 : Tester la connectivité avec la VM
-      - name: Test VM connectivity
-        run: |
-          echo "Testing connection to ${{ vars.VM_IP }}..."
-          ping -c 4 ${{ vars.VM_IP }}
-
-      # Étape 4 : Déployer sur la VM locale
+          ls ${{ github.workspace }}
       - name: Deploy to Local VM
         env:
-          VM_IP: ${{ vars.VM_IP }}
           VM_USER: ${{ vars.VM_USER }}
           VM_PASSWORD: ${{ vars.VM_PASSWORD }}
+          VM_IP: ${{ vars.VM_IP }}
         run: |
-          # Installer sshpass si nécessaire
+          # Install sshpass for password-based SSH
           sudo apt-get update && sudo apt-get install -y sshpass
           
-          # Copier le fichier construit sur la VM
-          echo "Copying files to $VM_USER@$VM_IP..."
+          # Copy the built package to the VM
           sshpass -p "$VM_PASSWORD" scp dist/*.whl $VM_USER@$VM_IP:/tmp/
-
-          # Se connecter à la VM et installer le package
-          echo "Connecting to $VM_USER@$VM_IP and installing package..."
+          
+          # SSH into the VM and install the package
           sshpass -p "$VM_PASSWORD" ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP << EOF
             python3 -m pip install /tmp/*.whl --no-cache-dir
             rm -f /tmp/*.whl
           EOF
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
