@@ -22,6 +22,7 @@ jobs:
       # Étape 3 : Vérifier et configurer Python
       - name: Ensure Python is installed
         run: |
+          echo "Ensuring Python is installed..."
           sudo apt-get update
           sudo apt-get install -y python3 python3-pip
           sudo ln -sf /usr/bin/python3 /usr/bin/python  # Crée un lien symbolique vers python3
@@ -30,6 +31,7 @@ jobs:
       # Étape 4 : Installer Poetry
       - name: Install Poetry
         run: |
+          echo "Installing Poetry..."
           curl -sSL https://install.python-poetry.org | python -
           echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
           source ~/.bashrc
@@ -50,7 +52,19 @@ jobs:
         run: |
           ls ${{ github.workspace }}
 
-      # Étape 8 : Déployer sur une machine virtuelle locale
+      # Étape 8 : Déboguer les variables
+      - name: Debug VM variables
+        env:
+          VM_USER: ${{ vars.VM_USER }}
+          VM_PASSWORD: ${{ vars.VM_PASSWORD }}
+          VM_IP: ${{ vars.VM_IP }}
+        run: |
+          echo "Debugging VM Variables:"
+          echo "VM_USER: $VM_USER"
+          echo "VM_IP: $VM_IP"
+          echo "VM_PASSWORD: ******"  # Masquer le mot de passe dans les logs
+
+      # Étape 9 : Déployer sur une machine virtuelle locale
       - name: Deploy to Local VM
         env:
           VM_USER: ${{ vars.VM_USER }}
@@ -69,10 +83,10 @@ jobs:
             rm -f /tmp/*.whl
           EOF
 
-      # Étape 9 : Vérifier les fichiers dans le repository (post-déploiement)
+      # Étape 10 : Vérifier les fichiers dans le repository (post-déploiement)
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
 
-      # Étape 10 : Vérifier le statut final du job
+      # Étape 11 : Vérifier le statut final du job
       - run: echo "🍏 This job's status is ${{ job.status }}."
