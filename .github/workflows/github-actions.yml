@@ -9,62 +9,46 @@ jobs:
 
     steps:
       # Étape 1 : Informations sur le déclencheur
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Display Trigger Info
+        run: |
+          echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+          echo "🐧 This job is running on a ${{ runner.os }} server hosted by GitHub."
+          echo "🔎 Branch: ${{ github.ref }}, Repository: ${{ github.repository }}."
 
       # Étape 2 : Vérifier le code
       - name: Check out repository code
         uses: actions/checkout@v4
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
 
-      # Étape 3 : Installer Poetry
+      # Étape 3 : Vérifier et configurer Python
+      - name: Ensure Python is installed
+        run: |
+          echo "Ensuring Python is installed..."
+          sudo apt-get update
+          sudo apt-get install -y python3 python3-pip
+          sudo ln -sf /usr/bin/python3 /usr/bin/python  # Crée un lien symbolique vers python3
+          python --version  # Vérifier que python fonctionne
+
+      # Étape 4 : Installer Poetry
       - name: Install Poetry
         run: |
           echo "Installing Poetry..."
-          curl -sSL https://install.python-poetry.org | python3 -
+          curl -sSL https://install.python-poetry.org | python -
           echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
           source ~/.bashrc
-          poetry --version  # Vérification de l'installation
+          poetry --version  # Vérifier que poetry fonctionne
 
-      # Étape 4 : Ajouter Poetry au PATH (optionnel si déjà dans le PATH)
+      # Étape 5 : Ajouter Poetry au PATH (au cas où il ne serait pas trouvé)
       - name: Add Poetry to PATH
         run: |
           export PATH="$HOME/.local/bin:$PATH"
           poetry --version
 
-      # Étape 5 : Installer les dépendances avec Poetry
+      # Étape 6 : Installer les dépendances avec Poetry
       - name: Poetry Install
-        run: poetry install --sync --no-interaction
-
-      # Étape 6 : Construire le package avec Poetry
-      - name: Poetry package
-        run: poetry build
-
-      # Étape 7 : Lister les fichiers dans le repository
-      - name: List files in the repository
         run: |
-          ls ${{ github.workspace }}
+          poetry install --sync --no-interaction
 
-      # Étape 8 : Déployer sur une machine virtuelle locale
-      - name: Deploy to Local VM
-        env:
-          VM_USER: ${{ vars.VM_USER }}
-          VM_PASSWORD: ${{ vars.VM_PASSWORD }}
-          VM_IP: ${{ vars.VM_IP }}
+      # Étape 7 : Construire le package avec Poetry
+      - name: Poetry Build
         run: |
-          echo "Deploying to $VM_USER@$VM_IP..."
-          sudo apt-get update && sudo apt-get install -y sshpass
-          sshpass -p "$VM_PASSWORD" scp dist/*.whl $VM_USER@$VM_IP:/tmp/
-          sshpass -p "$VM_PASSWORD" ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP << EOF
-            python3 -m pip install /tmp/*.whl --no-cache-dir
-            rm -f /tmp/*.whl
-          EOF
-
-      # Étape 9 : Lister les fichiers dans le repository (post-déploiement)
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-
-      # Étape 10 : Vérifier le statut final du job
-      - run: echo "🍏 This job's status is ${{ job.status }}."
