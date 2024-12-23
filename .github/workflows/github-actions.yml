@@ -6,6 +6,7 @@ on: [push]
 jobs:
   Explore-GitHub-Actions:
     runs-on: self-hosted
+    environment: secrets.VM_USER  # Définition explicite de l'environnement
 
     steps:
       # Étape 1 : Informations sur le déclencheur
