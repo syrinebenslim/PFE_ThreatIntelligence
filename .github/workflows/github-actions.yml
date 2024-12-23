@@ -70,7 +70,6 @@ jobs:
           VM_IP: ${{ vars.VM_IP }}
           VM_PASSWORD: ${{ vars.VM_PASSWORD }}
           VM_USER: ${{ vars.VM_USER }}
-
         run: |
           echo "Deploying to $VM_USER@$VM_IP..."
           sudo apt-get update && sudo apt-get install -y sshpass
