@@ -10,13 +10,14 @@ jobs:
     steps:
       # Étape 1 : Informations sur le déclencheur
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 Branch: ${{ github.ref }}, Repository: ${{ github.repository }}."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
 
       # Étape 2 : Vérifier le code
       - name: Check out repository code
         uses: actions/checkout@v4
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
       # Étape 3 : Vérifier et configurer Python
       - name: Ensure Python is installed
@@ -92,12 +93,13 @@ jobs:
             echo "Removing the package from /tmp..."
             rm -f /tmp/*.whl
           EOF
-
+          
           # Vérification de l'installation
           echo "Verifying package installation..."
           sshpass -p "$VM_PASSWORD" ssh -o StrictHostKeyChecking=no $VM_USER@$VM_IP << EOF
             python3 -m pip show <your-package-name> || echo "Package not installed"
-          EOF
+          EOF 
+       
 
       # Étape 10 : Vérifier les fichiers dans le repository (post-déploiement)
       - name: List files in the repository
