@@ -1,4 +1,3 @@
-# This is a sample Python script.
 import uuid
 
 from sqlalchemy.orm import declarative_base
@@ -8,6 +7,22 @@ from sqlalchemy.orm import declarative_base
 from watcher.parser.data_parser import Csv2Json
 from watcher.schemas.ingest_tidb import DatabaseConnection, QueryShadowServerFeeds
 from watcher.schemas import Event4MicrosoftSinkhole
+
+
+def create_organization_assets_table():
+    """
+    Crée la table 'organization_assets' dans la base de données.
+    """
+    from watcher.schemas import OrganizationAssets  # Importer le modèle
+    try:
+        # Initialiser la connexion
+        engine = DatabaseConnection().engine
+
+        # Créer la table uniquement si elle n'existe pas
+        OrganizationAssets.__table__.create(bind=engine, checkfirst=True)
+        print("Table 'organization_assets' created successfully.")
+    except Exception as ex:
+        print("Error creating table 'organization_assets':", ex)
 
 
 def main():
@@ -47,6 +62,8 @@ def get_session():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    main()
+    # Crée uniquement la table 'organization_assets'
+    create_organization_assets_table()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # Appeler la logique principale
+    main()

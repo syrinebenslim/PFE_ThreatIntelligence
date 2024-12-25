@@ -1,4 +1,4 @@
-from sqlalchemy import Column, TIMESTAMP, JSON, BigInteger, Integer, String, VARBINARY, Float
+from sqlalchemy import Column, TIMESTAMP, JSON, BigInteger, Integer, String, VARBINARY, Float,UniqueConstraint
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -32,6 +32,27 @@ class MispIOCORGA(Base):
     timestamp = Column(BigInteger)
     category = Column(String)
     organisation = Column(String)
+
+
+
+class OrganizationAssets(Base):
+    __tablename__ = 'organization_assets'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    organization_name = Column(String(255), nullable=False)
+    asset_type = Column(String(255), nullable=False)
+    ip_address = Column(String(45), nullable=False, unique=True)
+    contact_telephone = Column(String(15), nullable=True)  # Numéro de téléphone
+    other_details = Column(JSON, nullable=True)  # Informations supplémentaires
+
+    __table_args__ = (UniqueConstraint('ip_address', name='unique_ip_address'),)
+
+    def __repr__(self):
+        return (f"OrganizationAssets(id={self.id!r}, organization_name={self.organization_name!r}, "
+                f"asset_type={self.asset_type!r}, ip_address={self.ip_address!r}, "
+                f"contact_telephone={self.contact_telephone!r})")
+
+
 
 
 # Modèle ShadowVulnerabilities
